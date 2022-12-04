@@ -15,8 +15,9 @@ class TestCampCleanup(unittest.TestCase):
 6-6,4-6
 2-6,4-8"""
         _impl = CampCleanup(_example.splitlines())
-        self.assertEqual(_impl.score(), 2)
+        self.assertEqual(_impl.score(), 4)
 
 
 if __name__ == '__main__':
     unittest.main()
+pass

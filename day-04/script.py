@@ -26,7 +26,7 @@ class Team:
 
     def isoverlapping(self):
         "Returns true if elf1 or elf2 are overlapping"
-        return self.elf1.issubset(self.elf2) or self.elf2.issubset(self.elf1)
+        return len(self.elf1.intersection(self.elf2))>0
 
 
 _cleanup = CampCleanup(_lines)

@@ -2,33 +2,28 @@
 handle = open(r'./day-02/input', 'r', encoding='UTF8')
 lines = handle.readlines()
 
+
 class Round:
     "Define a Rock paperscisor round."
+
     def __init__(self, line):
         self.opponent_choice = ord(line[0]) - ord('A')
-        self.my_choice = ord(line[2]) - ord('X')
-    def result(self):
-        "Return 0 if defeat, 3 if draw, 6 if win."
-        if self.opponent_choice == self.my_choice:
-            return 3
-        if self.opponent_choice == 0:
-            if self.my_choice == 1:
-                return 6
-            elif self.my_choice == 2:
-                return 0
-        if self.opponent_choice == 1:
-            if self.my_choice == 2:
-                return 6
-            elif self.my_choice == 0:
-                return 0
-        if self.opponent_choice == 2:
-            if self.my_choice == 0:
-                return 6
-            elif self.my_choice == 1:
-                return 0
+        self.result = (ord(line[2]) - ord('X')) * 3
+
+    def my_choice(self):
+        "Calcul my_choice depending of the opponent choice and expected result."
+        if self.result == 3:  # draw
+            return self.opponent_choice
+        elif self.result == 0:  # loose
+            return (self.opponent_choice + 2) % 3
+        elif self.result == 6:  # win
+            return (self.opponent_choice + 1) % 3
+        raise Exception("something went wrong")
+
     def score(self):
         "Return the score of this round."
-        return self.my_choice +1 + self.result()
+        return self.my_choice() + 1 + self.result
 
-rounds = map(lambda l:Round(l), lines)
+
+rounds = map(Round, lines)
 print(sum(map(lambda r: r.score(), rounds)))

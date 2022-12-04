@@ -14,7 +14,7 @@ class TestRucksackReorganization(unittest.TestCase):
         ttgJtRGJQctTZtZT
         CrZsJsPPZsGzwwsLwLmpwMDw"""
         _reorg = RucksackReorganization(_example.splitlines())
-        self.assertEqual(_reorg.score(), 157)
+        self.assertEqual(_reorg.score(), 70)
 
 class TestRucksack(unittest.TestCase):
     "Tests for Rucksack"

@@ -18,7 +18,7 @@ move 3 from 1 to 3
 move 2 from 2 to 1
 move 1 from 1 to 2"""
         _impl = SupplyStacks(_example.splitlines())
-        self.assertEqual(_impl.answer(), 'CMZ')
+        self.assertEqual(_impl.answer(), 'MCD')
 
 if __name__ == '__main__':
     unittest.main()

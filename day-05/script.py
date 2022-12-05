@@ -47,8 +47,8 @@ class SupplyStacks:
             nbofmove = int(m.group(1))
             fromstack = int(m.group(2))
             tostack = int(m.group(3))
-            for _ in range(0, nbofmove):
-                self.stacks[tostack - 1].append(self.stacks[fromstack-1].pop())
+            self.stacks[tostack - 1] += self.stacks[fromstack-1][-nbofmove:]
+            self.stacks[fromstack-1][-nbofmove:] = []
         result = ''
         for stack in self.stacks:
             result += stack[-1]

@@ -19,9 +19,9 @@ class TestSupplyStacks(unittest.TestCase):
         _impl = NoSpaceLeftOnDevice(self.example.splitlines())
         self.assertEqual(_impl.answer1(), 21)
 
-    # def test_answer2(self):      
-    #     _impl = NoSpaceLeftOnDevice(self.example.splitlines())
-    #     self.assertEqual(_impl.answer2(), 'd')
+    def test_answer2(self):      
+        _impl = NoSpaceLeftOnDevice(self.example.splitlines())
+        self.assertEqual(_impl.answer2(), 8)
 
 if __name__ == '__main__':
     unittest.main()

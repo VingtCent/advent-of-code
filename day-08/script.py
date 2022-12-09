@@ -29,7 +29,30 @@ class NoSpaceLeftOnDevice:
         return result                
 
     def answer2(self):                
-        return None
+        maxtreeview = 0
+        for j in range(1, len(self.rows)-1):
+            for i in range(1, len(self.columns)-1):
+                currenttree = self.rows[i][j]
+                viewWest, viewEast, viewNorth, viewSouth = 0, 0, 0, 0
+                for t in reversed([t for t in self.rows[i][:j]]):
+                    viewWest += 1
+                    if t >= currenttree:                        
+                        break
+                for t in [t for t in self.rows[i][j+1:]]:
+                    viewEast += 1
+                    if t >= currenttree:                        
+                        break
+                for t in reversed([t for t in self.columns[j][:i]]):
+                    viewNorth += 1
+                    if t >= currenttree:                        
+                        break
+                for t in [t for t in self.columns[j][i+1:]]:
+                    viewSouth += 1
+                    if t >= currenttree:                        
+                        break
+                maxtreeview = max(maxtreeview, viewWest * viewEast * viewNorth * viewSouth)
+               
+        return maxtreeview            
 
 if __name__ == '__main__':
     main()

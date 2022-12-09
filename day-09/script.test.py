@@ -24,8 +24,16 @@ R 2"""
 
     def test_answer2(self):
         "Test answer for part 2."
-        _impl = RopeBridge(self.example.splitlines())
-        self.assertEqual(_impl.answer2(), None)
+        example2 = """R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20"""
+        _impl = RopeBridge(example2.splitlines())
+        self.assertEqual(_impl.answer2(), 36)
 
 
 if __name__ == "__main__":

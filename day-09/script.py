@@ -1,60 +1,72 @@
-"Advent of code day 8."
-import re;
+"Advent of code day 9."
+
 
 def main():
-    handle = open(r'./day-08/input', 'r', encoding='UTF8')
+    "Main."
+    handle = open(r"./day-09/input", "r", encoding="UTF8")
     _lines = handle.readlines()
-    _impl = NoSpaceLeftOnDevice(_lines)
+    _impl = RopeBridge(_lines)
     print("Answer 1:", _impl.answer1())
     print("Answer 2:", _impl.answer2())
 
 
-class NoSpaceLeftOnDevice:
+class RopeBridge:
     "Impl class."
 
     def __init__(self, lines) -> None:
-        self.rows = [[int(value) for value in line.strip()] for line in lines]
-        self.columns = list(zip(*self.rows))
-        
-    def answer1(self):        
-        result = len(self.rows)*2 + len(self.columns)*2 - 4
-        for j in range(1, len(self.rows)-1):
-            for i in range(1, len(self.columns)-1):
-                currenttree = self.rows[i][j]
-                if (not [t for t in self.rows[i][:j] if t >= currenttree]) \
-                        or (not [t for t in self.rows[i][j+1:] if t >= currenttree]) \
-                        or (not [t for t in self.columns[j][:i] if t >= currenttree]) \
-                        or (not [t for t in self.columns[j][i+1:] if t >= currenttree]):
-                    result += 1
-        return result                
+        self.moves = [(l.split()[0], int(l.split()[1])) for l in lines]
 
-    def answer2(self):                
-        maxtreeview = 0
-        for j in range(1, len(self.rows)-1):
-            for i in range(1, len(self.columns)-1):
-                currenttree = self.rows[i][j]
-                viewWest, viewEast, viewNorth, viewSouth = 0, 0, 0, 0
-                for t in reversed([t for t in self.rows[i][:j]]):
-                    viewWest += 1
-                    if t >= currenttree:                        
-                        break
-                for t in [t for t in self.rows[i][j+1:]]:
-                    viewEast += 1
-                    if t >= currenttree:                        
-                        break
-                for t in reversed([t for t in self.columns[j][:i]]):
-                    viewNorth += 1
-                    if t >= currenttree:                        
-                        break
-                for t in [t for t in self.columns[j][i+1:]]:
-                    viewSouth += 1
-                    if t >= currenttree:                        
-                        break
-                maxtreeview = max(maxtreeview, viewWest * viewEast * viewNorth * viewSouth)
-               
-        return maxtreeview            
+    def answer1(self):
+        "Returns Answer to part1 problem"
 
-if __name__ == '__main__':
+        positions = set()
+        rope = Rope()
+
+        for move in self.moves:
+            for _ in range(0, move[1]):
+                positions.add(rope.move(move[0]))
+
+        return len(positions)
+
+    def answer2(self):
+        "Answer to part 2."
+        return None
+
+
+class Rope:
+    "Define the behavior of a rope."
+
+    def __init__(self) -> None:
+        self._head = [0, 0]
+        self._tail = [0, 0]
+
+    @staticmethod
+    def _move(direction, position):
+        match direction:
+            case "U":
+                position[1] += 1
+            case "D":
+                position[1] -= 1
+            case "R":
+                position[0] += 1
+            case "L":
+                position[0] -= 1
+            case _:
+                raise ValueError(direction)
+
+    def move(self, direction):
+        "Move the rope to one direction."
+        Rope._move(direction, self._head)
+        xdiff = self._head[0] - self._tail[0]
+        ydiff = self._head[1] - self._tail[1]
+        if abs(xdiff) > 1 or abs(ydiff) > 1:
+            if xdiff == 0 or ydiff == 0:
+                Rope._move(direction, self._tail)
+            else:
+                self._tail[0] += xdiff // abs(xdiff)
+                self._tail[1] += ydiff // abs(ydiff)
+        return (self._tail[0], self._tail[1])
+
+
+if __name__ == "__main__":
     main()
-pass
-

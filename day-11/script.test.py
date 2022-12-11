@@ -44,7 +44,7 @@ Monkey 3:
     def test_answer2(self):
         "Test answer for part 2."
         _impl = MonkeyInTheMiddle(self.example.splitlines())
-        self.assertEqual(_impl.answer2(), None)
+        self.assertEqual(_impl.answer2(), 2713310158)
 
 
 if __name__ == "__main__":

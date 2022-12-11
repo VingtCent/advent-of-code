@@ -1,6 +1,7 @@
 "Advent of code day 11."
 
 
+from math import prod
 import re
 
 
@@ -10,6 +11,7 @@ def main():
     _lines = handle.readlines()
     _impl = MonkeyInTheMiddle(_lines)
     print("Answer 1:", _impl.answer1())
+    _impl = MonkeyInTheMiddle(_lines)
     print("Answer 2:", _impl.answer2())
 
 
@@ -42,51 +44,63 @@ class MonkeyInTheMiddle:
                     self.monkeys[move[0]].add(move[1])
             print("Round", i)
             for j, monkey in enumerate(self.monkeys):
-                print("Monkey",j, monkey)
-        monkeysinspections = sorted([m.inspections for m in self.monkeys])        
+                print("Monkey", j, monkey)
+        monkeysinspections = sorted([m.inspections for m in self.monkeys])
         return monkeysinspections[-2] * monkeysinspections[-1]
 
     def answer2(self):
         "Answer to part 2."
-        return None
+        common_modulator = prod(monkey.modulator for monkey in self.monkeys)
+        for i in range(1, 10001):
+            for monkey in self.monkeys:
+                moves = monkey.play(1)
+                for move in moves:
+                    self.monkeys[move[0]].add(move[1]%common_modulator)
+            if i in [1, 50, 100, 500, 1000, 5000, 10000]:
+                print("Round", i)
+                for j, monkey in enumerate(self.monkeys):
+                    print("Monkey", j, "inspected items ", monkey.inspections, "times")
+        monkeysinspections = sorted([m.inspections for m in self.monkeys])
+        return monkeysinspections[-2] * monkeysinspections[-1]
 
 
 class _Monkey:
     def __init__(self, starting_items, operation, test, monkey_true, monkey_false):
         self._items = starting_items
-        self._operationline = operation
-        self._testline = test
         self._monkey1 = monkey_true
         self._monkey2 = monkey_false
         self.inspections = 0
 
-    def __str__(self) -> str:
-        return ', '.join([str(x) for x in self._items])
-
-    def _ops(self, item):
-        arg = self._operationline.split()[-1]
-        if arg == "old":
-            value = item
-        else:
-            value = int(arg)
-
-        if self._operationline.startswith(" new = old * "):
-            return item * value
-        elif self._operationline.startswith(" new = old + "):
-            return item + value
+        if operation.startswith(" new = old * old"):
+            self._operation = lambda item: item * item
+        elif operation.startswith(" new = old * "):
+            value = int(operation.split()[-1])
+            self._operation = lambda item: item * value
+        elif operation.startswith(" new = old + old"):
+            self._operation = lambda item: item + item
+        elif operation.startswith(" new = old + "):
+            value = int(operation.split()[-1])
+            self._operation = lambda item: item + value
         else:
             raise ValueError("Unable to read operation")
 
-    def _test(self, item):
-        arg = int(self._testline.split()[-1])
-        return item % arg == 0
+        self.modulator = int(test.split()[-1])
 
-    def play(self):
+    def __str__(self) -> str:
+        return ", ".join([str(x) for x in self._items])
+
+    def _ops(self, item):
+        return self._operation(item)
+
+    def _test(self, item):
+        return item % self.modulator == 0
+
+    def play(self, relief=3):
         "Play a round."
         moves = []
         for item in self._items:
             self.inspections += 1
-            item = self._ops(item) // 3
+            item = self._ops(item) // relief
             if self._test(item):
                 moves.append((self._monkey1, item))
             else:

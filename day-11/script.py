@@ -19,7 +19,11 @@ class MonkeyInTheMiddle:
     "Impl class."
 
     def __init__(self, lines) -> None:
-        monkeypattern = r"^Monkey (?P<monkey>\d+):\s*Starting items:(?P<items>.*)\n\s*Operation:(?P<operation>.*)\n\s*Test:(?P<test>.*)\n\s*If true: throw to monkey (?P<monkey_true>\d+)\n\s*If false: throw to monkey (?P<monkey_false>\d+)"
+        monkeypattern = r"""^Monkey (?P<monkey>\d+):\s*Starting items:(?P<items>.*)
+\s*Operation:(?P<operation>.*)
+\s*Test:(?P<test>.*)
+\s*If true: throw to monkey (?P<monkey_true>\d+)
+\s*If false: throw to monkey (?P<monkey_false>\d+)"""
         self.monkeys = []
         for i in range(0, len(lines), 7):
             match = re.match(monkeypattern, "\n".join(lines[i : i + 6]))

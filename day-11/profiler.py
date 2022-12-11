@@ -1,10 +1,12 @@
 "Profiler"
 
-from script import MonkeyInTheMiddle
-import cProfile, pstats, io
+import cProfile
+import io
+import pstats
 from pstats import SortKey
+from script import MonkeyInTheMiddle
 
-example = """Monkey 0:
+EXAMPLE = """Monkey 0:
   Starting items: 79, 98
   Operation: new = old * 19
   Test: divisible by 23
@@ -36,7 +38,7 @@ pr = cProfile.Profile()
 pr.enable()
 
 # ... do something ...
-_impl = MonkeyInTheMiddle(example.splitlines())
+_impl = MonkeyInTheMiddle(EXAMPLE.splitlines())
 result = _impl.answer2()
 
 pr.disable()

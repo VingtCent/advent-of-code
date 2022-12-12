@@ -1,7 +1,7 @@
 "Advent of code day 12."
 
-from dijkstra import Graph, DijkstraSPF
 import math
+from dijkstra import Graph, DijkstraSPF
 
 
 def main():

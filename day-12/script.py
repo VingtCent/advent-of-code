@@ -1,6 +1,6 @@
 "Advent of code day 12."
 
-from dijkstra import Graph, DijkstraSPF
+import math
 
 
 def main():
@@ -32,7 +32,7 @@ class HillClimbingAlgorithm:
 
     def answer1(self):
         "Returns answer to part1."
-        graph = Graph()
+        graph = _Graph()
 
         def elevation(position):
             return ord(
@@ -56,13 +56,36 @@ class HillClimbingAlgorithm:
                             <= elevation(target)
                             <= (elevation(value) + 1)
                         ):
-                            graph.add_edge((i, j), (i + move[0], j + move[1]), 1)
-        dijkstra = DijkstraSPF(graph, self.start)
-        return dijkstra.get_distance(self.end)
+                            graph.add_edge((i, j), (i + move[0], j + move[1]))
+        return graph.get_distance(self.start, self.end)
 
     def answer2(self):
         "Returns answer to part 2."
         return None
+
+
+class _Graph:
+    def __init__(self) -> None:
+        self.edges = dict()
+
+    def add_edge(self, start, end):
+        if start in self.edges.keys():
+            self.edges[start].append(end)
+        else:
+            self.edges[start] = [end]
+
+    def get_distance(self, start, end):
+        vertices = dict([(k, math.inf) for k in self.edges.keys()])
+        vertices[start] = 0
+
+        while vertices:
+            current = min(vertices, key=vertices.get)
+            if current == end:
+                return vertices[current]
+            for neighbor in self.edges[current]:
+                if neighbor in vertices:
+                    vertices[neighbor] = min(vertices[neighbor], vertices[current] + 1)
+            vertices.pop(current)
 
 
 if __name__ == "__main__":

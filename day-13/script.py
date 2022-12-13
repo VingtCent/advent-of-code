@@ -1,7 +1,6 @@
 "Advent of code day 13."
 
 
-import re
 from typing import Any
 
 
@@ -20,7 +19,6 @@ class DistressSignal:
 
     def __init__(self, lines: list[str]) -> None:
         self.pairs = []
-
         for i, line in enumerate(lines):
             match i % 3:
                 case 0:
@@ -29,7 +27,6 @@ class DistressSignal:
                     self.pairs.append(_Pair(i // 3 + 1, line1, line))
                 case _:
                     pass
-        pass
 
     def answer1(self):
         "Returns answer to part1."
@@ -53,7 +50,7 @@ class _Pair:
         value = line.strip()[1:-1]
         index = 0
         while index < len(value):
-            character = value[index]            
+            character = value[index]
             if character.isnumeric():
                 current_number += character
                 index += 1
@@ -64,7 +61,7 @@ class _Pair:
                 index += 1
             elif character == "[":
                 end = index + _Pair._find_end(value[index:])
-                result.append(_Pair._parse(value[index:end+1]))
+                result.append(_Pair._parse(value[index : end + 1]))
                 index = end + 1
             else:
                 raise ValueError("Unknown")
@@ -75,8 +72,8 @@ class _Pair:
     @staticmethod
     def _find_end(value: str):
         sub_lists = 0
-        for i, c in enumerate(value):
-            match c:
+        for i, character in enumerate(value):
+            match character:
                 case "]":
                     sub_lists -= 1
                     if sub_lists == 0:
@@ -87,8 +84,34 @@ class _Pair:
                     pass
         raise ValueError("No end found")
 
+    @staticmethod
+    def _compare(left, rigth):
+        if isinstance(left,int):
+            left = [left]
+        if isinstance(rigth, int):
+            rigth = [rigth]
+        for i, left_value in enumerate(left):
+            if i >= len(rigth):
+                return False
+            rigth_value = rigth[i]
+            if isinstance(left_value, int) and isinstance(rigth_value, int):
+                if left_value < rigth_value:
+                    return True
+                elif left_value > rigth_value:
+                    return False
+            else:
+                compare = _Pair._compare(left_value, rigth_value)
+                if compare is not None:
+                    return compare
+        if len(left) < len(rigth):
+            return True
+        return None
+
     def is_right_order(self):
-        return True
+        "Compare line1 with line2 to check order."
+        result = _Pair._compare(self._line1, self._line2)
+        print(self._line1, self._line2, " = ", result)
+        return result
 
 
 if __name__ == "__main__":

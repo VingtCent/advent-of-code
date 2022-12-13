@@ -1,6 +1,7 @@
 "Advent of code day 13."
 
 
+from functools import cmp_to_key
 from typing import Any
 
 
@@ -34,13 +35,18 @@ class DistressSignal:
 
     def answer2(self):
         "Returns answer to part 2."
-        return None
+        lines = [[[2]], [[6]]]
+        for pair in self.pairs:
+            lines.append(pair.line1)
+            lines.append(pair.line2)
+        lines.sort(key=cmp_to_key(_Pair.compare))
+        return (lines.index([[2]]) + 1) * (lines.index([[6]]) + 1)
 
 
 class _Pair:
     def __init__(self, index, line1, line2) -> None:
-        self._line1 = _Pair._parse(line1)
-        self._line2 = _Pair._parse(line2)
+        self.line1 = _Pair._parse(line1)
+        self.line2 = _Pair._parse(line2)
         self.index = index
 
     @staticmethod
@@ -85,33 +91,34 @@ class _Pair:
         raise ValueError("No end found")
 
     @staticmethod
-    def _compare(left, rigth):
-        if isinstance(left,int):
+    def compare(left, rigth):
+        "Compare 2 lines."
+        if isinstance(left, int):
             left = [left]
         if isinstance(rigth, int):
             rigth = [rigth]
         for i, left_value in enumerate(left):
             if i >= len(rigth):
-                return False
+                return 1
             rigth_value = rigth[i]
             if isinstance(left_value, int) and isinstance(rigth_value, int):
                 if left_value < rigth_value:
-                    return True
+                    return -1
                 elif left_value > rigth_value:
-                    return False
+                    return 1
             else:
-                compare = _Pair._compare(left_value, rigth_value)
-                if compare is not None:
+                compare = _Pair.compare(left_value, rigth_value)
+                if compare != 0:
                     return compare
         if len(left) < len(rigth):
-            return True
-        return None
+            return -1
+        return 0
 
     def is_right_order(self):
         "Compare line1 with line2 to check order."
-        result = _Pair._compare(self._line1, self._line2)
-        print(self._line1, self._line2, " = ", result)
-        return result
+        result = _Pair.compare(self.line1, self.line2)
+        print(self.line1, self.line2, " = ", result)
+        return result < 0
 
 
 if __name__ == "__main__":

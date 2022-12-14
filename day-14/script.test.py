@@ -19,7 +19,7 @@ class TestRegolithReservoir(unittest.TestCase):
     def test_answer2(self):
         "Test answer for part 2."
         _impl = RegolithReservoir(self.example.splitlines())
-        self.assertEqual(_impl.answer2(), None)
+        self.assertEqual(_impl.answer2(), 93)
 
 
 if __name__ == "__main__":

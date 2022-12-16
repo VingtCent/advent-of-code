@@ -11,7 +11,7 @@ def main():
     _impl = BeaconExclusionZone(_lines)
     print("Answer 1:", _impl.answer1(2000000))
     _impl = BeaconExclusionZone(_lines)
-    print("Answer 2:", _impl.answer2())
+    print("Answer 2:", _impl.answer2(4000000))
 
 
 class BeaconExclusionZone:
@@ -30,9 +30,19 @@ class BeaconExclusionZone:
         )
         return len(result)
 
-    def answer2(self):
+    def answer2(self, search_area:int):
         "Returns answer to part 2."
-        return None
+        for i in range(search_area+1):
+            positions = set(range(0, search_area+1))
+            for sensor in self._sensors:
+                detected = sensor.get_detected_positions(i)
+                positions.difference_update(detected)
+                if len(positions)==0:
+                    break
+            if len(positions) > 0:
+                result = (positions.pop(), i)
+                break
+        return result[0]*4000000 + result[1]
 
 
 class _Sensor:

@@ -31,7 +31,7 @@ Sensor at x=20, y=1: closest beacon is at x=15, y=3"""
     def test_answer2(self):
         "Test answer for part 2."
         _impl = BeaconExclusionZone(self.example.splitlines())
-        self.assertEqual(_impl.answer2(), 93)
+        self.assertEqual(_impl.answer2(20), 56000011)
 
 
 if __name__ == "__main__":

@@ -15,19 +15,6 @@ def main():
     print("Answer 2:", _impl.answer2())
 
 
-@dataclass
-class _Valve:
-    name: str
-    rate: int
-    destinations: list[str]
-
-
-@dataclass
-class _MaxResult:
-    time_spent: int
-    value: int
-
-
 class ProboscideaVolcanium:
     "Impl class."
 
@@ -36,52 +23,45 @@ class ProboscideaVolcanium:
         line_pattern = re.compile(
             r"^Valve (?P<valve>[A-Z]+) has flow rate=(?P<rate>\d+); tunnels? leads? to valves? (?P<destinations>([A-Z]+,?\s*)*)$"
         )
+        self.rates = dict()
+        self.leads = dict()
         for line in lines:
             match = line_pattern.match(line)
-            self.valves[match.group("valve")] = _Valve(
-                match.group("valve"),
-                int(match.group("rate")),
-                match.group("destinations").split(", "),
-            )
+            self.rates[match.group("valve")] = int(match.group("rate"))
+            self.leads[match.group("valve")] = [
+                l.strip() for l in match.group("destinations").strip().split(",")
+            ]
 
-    def _max(
-        self, valve: Type[_Valve], time: int, predecessor: str | None
-    ) -> _MaxResult:
-        valve_result = _MaxResult(1, (time-1) * valve.rate)
-        if time == 1:
-            return valve_result
-        else:
-            result = _MaxResult(0, lambda x: x * 0)
-           
-            results: dict[str, _MaxResult] = dict()
-            results[valve.name] = valve_result
-            for key in [d for d in valve.destinations if d != predecessor]:
-                results[key] = self._max(self.valves[key], time - 1, valve.name)
-            while time >= 1 and results:
-               
+    def _max(self, valve: str, time: int, predecessor: str | None):
+        destinations = [d for d in self.leads[valve] if d != predecessor]
+        if not destinations:
+            return (self.rates[valve] * (time - 1), 1)
 
-                keys = list(results.keys())
-                max_key = keys.pop(0)
-                result[max_key] = self._max(self.valves[max_key], time, valve.name)
-                
-                for key in keys:
-                    if results[key].time_spent > time:
-                        result[key] = self._max(self.valves[key], time, valve.name)
-                    if results[key].calcul(time) > results[max_key].calcul(time):
-                        max_key = key
-                
-                max_result = results.pop(max_key)
-                result.calcul = lambda x: result.calcul(x) + max_result.calcul(
-                    x - result.time_spent - 1 if max_key != valve.name else 0
-                )
-                result.time_spent += max_result.time_spent
-                time -= max_result.time_spent
+        valve_opened = False
+        result = 0
+        time_left = time        
+        while time_left > 0 and (destinations or not valve_opened):
+            max_valve = valve if not valve_opened else None
+            max_valve_value = self.rates[valve] * (time_left - 1) if not valve_opened else -1
+            max_valve_time = 1 if not valve_opened else 0
+            for destination in destinations:
+                value, valve_time = self._max(destination, time_left - 1, valve)
+                if max_valve is None or value > max_valve_value:
+                    max_valve = destination
+                    max_valve_value = value
+                    max_valve_time = valve_time + 2
+            result += max_valve_value
+            time_left -= max_valve_time
+            if max_valve == valve:
+                valve_opened = True
+            else:
+                destinations.remove(max_valve)
 
-            return result
+        return (result, time - time_left)
 
     def answer1(self):
         "Returns answer to part1."
-        return self._max(self.valves["AA"], 30, None).value
+        return self._max("AA", 30, None)[0]
 
     def answer2(self):
         "Returns answer to part 2."
